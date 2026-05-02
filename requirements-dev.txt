@@ -1,0 +1,7 @@
+-r requirements.txt
+pytest>=7.0
+black
+ruff
+isort
+mypy
+pre-commit
