@@ -1,0 +1,81 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "EML Framework: A Representation Study of the Exp-Minus-Log Operator"
+authors:
+  - family-names: Nath
+    given-names: Biswajyoti
+    email: biswajyotinath125@gmail.com
+repository-code: "https://github.com/biswajyoti-nath/eml-framework"
+doi: 10.5281/zenodo.19991157
+url: "https://doi.org/10.5281/zenodo.19991157"
+version: "0.1.0"
+date-released: "2026-05-03"
+license: MIT
+abstract: >
+  A research implementation studying the structural and computational
+  behaviour of the EML operator — eml(x, y) = exp(x) − ln(y) — under
+  practical, real-domain constraints. This repository implements a
+  restricted, positive-domain exp–log fragment of the operator defined
+  by Odrzywołek (2026), measures its effect on symbolic expression-tree
+  structure across a 23-expression benchmark suite, and explores
+  search-space behaviour in an evolutionary symbolic regression setting.
+keywords:
+  - symbolic computation
+  - exp-log algebra
+  - expression trees
+  - symbolic regression
+  - Schrödinger equation
+  - domain validation
+references:
+  - type: article
+    title: "All elementary functions from a single binary operator"
+    authors:
+      - family-names: "Odrzywołek"
+        given-names: "Andrzej"
+    year: 2026
+    url: "https://arxiv.org/abs/2603.21852"
+    doi: 10.48550/arXiv.2603.21852
+  - type: conference-paper
+    title: "Deep symbolic regression: Recovering mathematical expressions from data via risk-seeking policy gradients"
+    authors:
+      - family-names: Petersen
+        given-names: "Brenden K."
+      - family-names: Landajuela
+        given-names: Mikel
+      - family-names: Mundhenk
+        given-names: "Terrell N."
+      - family-names: Santiago
+        given-names: "Claudio P."
+      - family-names: Kim
+        given-names: "Soo K."
+      - family-names: Kim
+        given-names: "Joanne T."
+    year: 2021
+    conference:
+      name: "International Conference on Learning Representations (ICLR)"
+    url: "https://openreview.net/forum?id=m5Qsh0kBQG"
+  - type: article
+    title: "AI Feynman: A physics-inspired method for symbolic regression"
+    authors:
+      - family-names: Udrescu
+        given-names: "Silviu-Marian"
+      - family-names: Tegmark
+        given-names: Max
+    year: 2020
+    journal: "Science Advances"
+    doi: 10.1126/sciadv.aay2631
+  - type: article
+    title: "Symbolic Regression with a Learned Concept Library"
+    authors:
+      - family-names: Laabid
+        given-names: Najwa
+      - family-names: Grayeli
+        given-names: "Hadrien A."
+      - family-names: Lang
+        given-names: Leon
+      - family-names: Mordig
+        given-names: Maximilian
+    year: 2024
+    url: "https://arxiv.org/abs/2409.09359"
+    doi: 10.48550/arXiv.2409.09359

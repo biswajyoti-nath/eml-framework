@@ -1,5 +1,7 @@
 # EML Framework: A Representation Study of the Exp-Minus-Log Operator
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19991157.svg)](https://doi.org/10.5281/zenodo.19991157)
+
 A research implementation studying the structural and computational behavior
 of the **EML operator** — `eml(x, y) = exp(x) − ln(y)` — under practical,
 real-domain constraints. We measure how enforcing a single nonlinear
@@ -398,10 +400,26 @@ The theoretical contribution belongs entirely to the original paper.
 
 ---
 
-## Citation
+## Cite this repository
+
+If you use this code, data, or figures in your work, please cite:
+
+```bibtex
+@software{eml_framework_2026,
+  author    = {Nath, Biswajyoti},
+  title     = {{EML Framework: A Representation Study of the
+                Exp-Minus-Log Operator}},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.19991157},
+  url       = {https://doi.org/10.5281/zenodo.19991157}
+}
+```
+
+## Citation (original EML paper)
 
 If you use this repository in research that references the EML operator,
-please cite the original work:
+please also cite the original theoretical work:
 
 ```bibtex
 @misc{odrzywolek2026eml,
