@@ -1,6 +1,6 @@
 # EML Framework: A Representation Study of the Exp-Minus-Log Operator
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19991157.svg)](https://doi.org/10.5281/zenodo.19991157)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19991157.svg)](https://doi.org/10.5281/zenodo.19991771)
 
 A research implementation studying the structural and computational behavior
 of the **EML operator** — `eml(x, y) = exp(x) − ln(y)` — under practical,
