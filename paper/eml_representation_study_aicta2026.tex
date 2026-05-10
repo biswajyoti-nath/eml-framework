@@ -27,21 +27,11 @@
 \maketitle
 
 \begin{abstract}
-This paper characterizes how a constrained operator grammar reshapes symbolic
-search geometry in evolutionary symbolic regression. The grammar is built from a
-single nonlinear primitive, $\eml(x, y) = \expf(x) - \lnf(y)$, enforced under
-strict real-domain positivity constraints on all logarithm arguments. The
-implementation uses conservative symbolic positivity checking, strict
-tree-depth filtering, grammar-pure mutation with no repair, and a true
-evaluation budget in which \emph{every} candidate attempt---accepted or
-rejected---consumes computational budget. Through a structural benchmark study and an
-exploratory evolutionary experiment over 18 domain-safe targets, we observe
-three interrelated effects: (i)~EML macro-expansion induces systematic
-structural inflation in node count and tree depth; (ii)~the resulting valid
-candidate region becomes sparser under domain constraints, raising rejection
-rates; and (iii)~higher rejection density reduces effective search throughput,
-so that the same nominal budget supports fewer productive generations. Rejection-aware budget accounting reveals that every rejected evaluation directly consumes budget that would otherwise support productive search under constrained grammars. These findings are reported as a controlled characterization of constrained search behavior, not as a claim of grammatical or algorithmic superiority.
-\end{abstract}
+This paper studies how constrained operator grammars reshape symbolic search behavior in evolutionary symbolic regression. We analyze a grammar built from a single nonlinear primitive,
+\(
+\mathrm{eml}(x,y)=\exp(x)-\ln(y),
+\)
+under strict real-domain positivity constraints with conservative symbolic validity enforcement, grammar-pure mutation without repair, and rejection-aware accounting in which every candidate attempt—accepted or rejected—consumes evaluation budget. Across a structural benchmark study and an exploratory evolutionary experiment on 18 domain-safe targets, we observe three coupled effects. First, recursive EML macro-expansion systematically inflates symbolic tree depth and node count relative to native exp/log representations. Second, the constrained grammar induces substantially sparser valid search regions, increasing rejection density under strict validity enforcement. Third, elevated rejection density reduces effective evolutionary throughput, so identical nominal budgets support fewer productive generations. Rejection decomposition further shows that throughput loss is dominated primarily by structural depth overflow arising from recursive macro-expansion rather than by numerical instability alone. These findings are presented as a controlled empirical characterization of validity-aware symbolic search under operator-space restriction, not as a claim of algorithmic superiority.\end{abstract}
 
 \keywords{symbolic regression \and operator-space constraints \and structural inflation \and rejection rate \and EML representation}
 
@@ -100,8 +90,15 @@ and non-integer powers as
 \begin{equation}\label{eq:eml_pow}
   x^a = \expf\bigl(a \cdot \lnf(x)\bigr) \quad (x > 0).
 \end{equation}
-Both identities require provable positivity of all operands; candidates that
-cannot satisfy this requirement are rejected without repair.
+Division can be encoded as
+\begin{equation}\label{eq:eml_div}
+  x / y = \expf\bigl(\lnf(x) - \lnf(y)\bigr),
+\end{equation}
+which expands to $\eml(\lnf(x) - \lnf(y), 1)$ under EML. Square roots follow as
+\begin{equation}\label{eq:eml_sqrt}
+  \sqrt{x} = \expf\bigl(\frac{1}{2} \cdot \lnf(x)\bigr) \quad (x > 0),
+\end{equation}
+and more complex operations compound this inflation. For instance, the expression $\sqrt{x} / (x + 1)$ requires encoding as $\expf(\frac{1}{2} \lnf(x) - \lnf(x + 1))$, which in EML form becomes $\eml(\frac{1}{2} \lnf(x) - \lnf(x + 1), 1)$, where each $\lnf$ term itself expands into $1 - \eml(0, \cdot)$. These examples illustrate how even simple algebraic operations balloon into deeply nested EML structures, making the inflation visceral: what appears as a compact expression in standard notation becomes a sprawling tree under the constrained grammar.
 
 Symbolic positivity checking is conservative by design. The domain tests
 return false unless SymPy can prove positivity under its assumption system,
@@ -220,11 +217,7 @@ Ratio (EML/bl) & 1.4$\times$ & 1.4$\times$ & 0.1$\times$ & 11.4$\times$ & 0.3$\t
 
 The EML grammar produces trees with $1.4\times$ more nodes and $1.4\times$
 greater depth on average, while experiencing $1.9\times$ higher aggregate
-rejection rates ($85.9\%$ vs.~$44.6\%$). The most consequential effect is on productive generations: EML
-completes only $0.3\times$ as many generations as the baseline under the same
-evaluation budget. This reduction is the direct operational consequence of
-the causal chain described in Section~\ref{sub:rejection_dynamics}---higher rejection density consumes
-budget that would otherwise support productive evolutionary updates.
+rejection rates ($85.9\%$ vs.~$44.6\%$). Consequently, EML completes only $0.3\times$ as many generations as the baseline under the same evaluation budget.
 
 The distribution of rejection rates across targets further illustrates the
 search-space sparsity difference between grammars.
@@ -257,7 +250,7 @@ operands are themselves nontrivial. Structural inflation is therefore not an
 artifact to be normalized away; it is an inherent representational cost of
 the constrained grammar.
 
-The disaggregated rejection metrics in Table~\ref{tab:inflation_summary} reveal distinct operational mechanisms. Depth rejection dominates under EML ($75.2\pm0.7\%$ vs.~$6.6\pm6.0\%$ baseline), reflecting how structural inflation operationalizes the representational cost of maintaining domain-safe encodings within the constrained grammar. Because EML macro-expansion systematically increases tree depth---each $\expf$ adds one level, each $\lnf$ adds two---EML encodings rapidly exhaust the depth cap, causing the majority of candidates to be rejected for structural excess before fitness evaluation. Domain rejection is lower under EML ($0.6\%$ vs.~$6.5\%$ baseline) precisely because the depth gate filters out most structurally excessive candidates before they reach domain verification. This ordering demonstrates an interaction effect: structural inflation triggers depth rejection, which in turn masks the underlying domain constraint challenge. Numeric rejection is also lower under EML ($10.0\%$ vs.~$31.5\%$ baseline), as depth-filtered candidates never reach numerical evaluation. Figure~\ref{fig:rejection_composition} visualizes the composition of rejections: EML rejections are overwhelmingly depth-related ($87.6\%$ of all rejections), while baseline rejections distribute more evenly across types. This figure reports the composition of rejected candidates, not the overall rejection rate; the 87.6\% figure therefore denotes the share of all rejections that were depth-related, while the 75.2\% figure in Table~\ref{tab:inflation_summary} denotes the overall rate of all candidates rejected for depth. The dominant throughput limitation is therefore structural capacity---itself a consequence of the grammar's domain-safe encoding requirements---rather than domain validity in isolation.
+The disaggregated rejection metrics reveal that depth rejection dominates under EML ($75.2\pm0.7\%$ vs.~$6.6\pm6.0\%$ baseline), as structural inflation exhausts the depth cap before domain verification. Domain and numeric rejections are correspondingly lower. Figure~\ref{fig:rejection_composition} shows EML rejections are 87.6\% depth-related, versus a more balanced distribution in the baseline.
 
 \section{Symbolic Regression Results}\label{sec:regression_results}
 
@@ -274,9 +267,7 @@ grammars.
 \label{fig:rej_vs_gen}
 \end{figure}
 
-This separation is clear: EML targets cluster in the high-rejection,
-low-generation region, while baseline targets occupy the opposite quadrant.
-This clustering pattern illustrates the throughput consequences of rejection-aware accounting under fixed evaluation budgets. This visual confirmation of the causal chain identified in Section~\ref{sub:rejection_dynamics} demonstrates that higher rejection density directly reduces the number of productive evolutionary updates available under a fixed budget.
+This separation is clear: EML targets cluster in the high-rejection, low-generation region, while baseline targets occupy the opposite quadrant, confirming that higher rejection density reduces productive generations under fixed budgets.
 
 The exploratory regression experiment produced additional characterization
 observations:
