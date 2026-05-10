@@ -149,45 +149,29 @@ def validate_numeric() -> list[dict[str, Any]]:
 
             f_orig = _safe_lambdify(expr, x)
             f_eml = _safe_lambdify(eml_eval, x)
-            try:
-                y_orig = f_orig(xs)
-                y_eml = f_eml(xs)
-                error: np.ndarray = np.abs(y_orig - y_eml)
-                mean_err = float(np.nanmean(error))
-                max_err = float(np.nanmax(error))
-                logger.info(
-                    "OK  %s on [%.2f, %.2f]: mean=%.2e, max=%.2e",
-                    entry["name"],
-                    low,
-                    high,
-                    mean_err,
-                    max_err,
-                )
-                results.append(
-                    {
-                        "expression": entry["name"],
-                        "range": (low, high),
-                        "mean_error": mean_err,
-                        "max_error": max_err,
-                        "status": "ok",
-                    }
-                )
-            except Exception as exc:
-                logger.error(
-                    "FAIL %s on [%.2f, %.2f]: %s",
-                    entry["name"],
-                    low,
-                    high,
-                    exc,
-                )
-                results.append(
-                    {
-                        "expression": entry["name"],
-                        "range": (low, high),
-                        "status": "evaluation_error",
-                        "error": str(exc),
-                    }
-                )
+            with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
+                y_orig = np.asarray(f_orig(xs), dtype=float)
+                y_eml = np.asarray(f_eml(xs), dtype=float)
+            error: np.ndarray = np.abs(y_orig - y_eml)
+            mean_err = float(np.nanmean(error))
+            max_err = float(np.nanmax(error))
+            logger.info(
+                "OK  %s on [%.2f, %.2f]: mean=%.2e, max=%.2e",
+                entry["name"],
+                low,
+                high,
+                mean_err,
+                max_err,
+            )
+            results.append(
+                {
+                    "expression": entry["name"],
+                    "range": (low, high),
+                    "mean_error": mean_err,
+                    "max_error": max_err,
+                    "status": "ok",
+                }
+            )
 
     return results
 

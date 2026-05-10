@@ -178,7 +178,8 @@ tempCodeRunnerFile.py
 
 # Repository-specific: generated outputs
 experiments/*.png
-paper/figures/*.png
+results/
+figures/
 
 # LaTeX build artifacts
 paper/*.aux
@@ -188,6 +189,22 @@ paper/*.toc
 paper/*.fls
 paper/*.fdb_latexmk
 paper/*.synctex.gz
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Downloaded class files (not part of source)
+paper/IEEEtran.cls
+
+# Scratch / one-off files
+diff.patch
+*.patch
+EXPANDED_EXPERIMENTS_GUIDE.md
+FIXES_APPLIED.md
+IMPLEMENTATION_COMPLETE.md
 
 # VS Code workspace settings
 .vscode/

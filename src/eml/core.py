@@ -44,6 +44,7 @@ __all__ = [
     "exp_eml",
     "log_eml",
     "evaluate_eml",
+    "compute_metrics",
     "total_node_count",
     "nonlinear_node_count",
     "tree_depth",
@@ -319,3 +320,33 @@ def extract_log_arguments(expr: sp.Expr) -> list[sp.Expr]:
     return [node.args[0] for node in sp.preorder_traversal(expr) if node.func == sp.log]
 
 
+# ---------------------------------------------------------------------------
+# Unified metrics interface
+# ---------------------------------------------------------------------------
+
+
+def compute_metrics(expr: sp.Expr) -> dict[str, int]:
+    """Return all structural complexity metrics for *expr* as a single dict.
+
+    This is the canonical interface for structural analysis.  It has no side
+    effects and performs no printing or logging.
+
+    Parameters
+    ----------
+    expr:
+        Any SymPy expression (may contain EML nodes).
+
+    Returns
+    -------
+    dict
+        Keys: ``node_count``, ``depth``, ``nonlinear_nodes``, ``eml_nodes``,
+        ``unique_subexpressions``, ``weighted_cost``.
+    """
+    return {
+        "node_count": total_node_count(expr),
+        "depth": tree_depth(expr),
+        "nonlinear_nodes": nonlinear_node_count(expr),
+        "eml_nodes": eml_node_count(expr),
+        "unique_subexpressions": unique_subexpression_count(expr),
+        "weighted_cost": weighted_cost(expr),
+    }

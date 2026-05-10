@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "eml-framework"
 version = "0.1.0"
-description = "Symbolic EML exp-log transformation framework for the Schrödinger equation"
+description = "Symbolic EML exp-log transformation framework for constrained operator grammar analysis"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"

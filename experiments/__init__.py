@@ -1,1 +1,1 @@
-"""Experiment package for EML Schrödinger analysis."""
+"""Experiment package for EML grammar and representation analysis."""

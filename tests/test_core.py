@@ -7,6 +7,7 @@ Covers:
 - eml_node_count, eml_depth, operator_count
 - weighted_cost, unique_subexpression_count
 - extract_log_arguments
+- compute_metrics unified dict interface
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ import sympy as sp
 
 from eml import (
     EML,
+    compute_metrics,
     eml,
     eml_depth,
     eml_node_count,
@@ -247,3 +249,36 @@ def test_extract_log_arguments_multiple(x: sp.Symbol) -> None:
     """log(x) + log(x + 1) should yield two log arguments."""
     args = extract_log_arguments(sp.log(x) + sp.log(x + 1))
     assert len(args) == 2
+
+
+# ---------------------------------------------------------------------------
+# Unified metrics interface
+# ---------------------------------------------------------------------------
+
+
+def test_compute_metrics_keys(x: sp.Symbol) -> None:
+    """compute_metrics returns a dict with all six required keys."""
+    expr = exp_eml(x)  # eml(x, 1)
+    result = compute_metrics(expr)
+    required_keys = {
+        "node_count",
+        "depth",
+        "nonlinear_nodes",
+        "eml_nodes",
+        "unique_subexpressions",
+        "weighted_cost",
+    }
+    assert required_keys == set(result.keys())
+    assert all(isinstance(v, int) for v in result.values())
+
+
+def test_compute_metrics_consistency(x: sp.Symbol) -> None:
+    """compute_metrics values match individually called metric functions."""
+    expr = exp_eml(x)  # eml(x, 1)
+    result = compute_metrics(expr)
+    assert result["node_count"] == total_node_count(expr)
+    assert result["depth"] == tree_depth(expr)
+    assert result["nonlinear_nodes"] == nonlinear_node_count(expr)
+    assert result["eml_nodes"] == eml_node_count(expr)
+    assert result["unique_subexpressions"] == unique_subexpression_count(expr)
+    assert result["weighted_cost"] == weighted_cost(expr)

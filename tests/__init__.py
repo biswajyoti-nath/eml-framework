@@ -1,1 +1,1 @@
-# Tests for EML Schrödinger representation package.
+# Tests for EML representation and validation package.

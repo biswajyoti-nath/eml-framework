@@ -61,7 +61,9 @@ SEARCH_POP_SIZE: int = 100
 SEARCH_ELITE_SIZE: int = 15
 
 #: Maximum expression tree depth for candidate generation.
-SEARCH_MAX_DEPTH: int = 4
+#: Set to 6 to reduce representational bias against the EML grammar,
+#: which requires deeper structures to encode exp/log operations.
+SEARCH_MAX_DEPTH: int = 6
 
 #: Number of sample points used for MSE evaluation in symbolic regression.
 SEARCH_SAMPLE_POINTS: int = 201
