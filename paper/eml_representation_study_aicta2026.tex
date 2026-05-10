@@ -27,11 +27,8 @@
 \maketitle
 
 \begin{abstract}
-This paper studies how constrained operator grammars reshape symbolic search behavior in evolutionary symbolic regression. We analyze a grammar built from a single nonlinear primitive,
-\(
-\mathrm{eml}(x,y)=\exp(x)-\ln(y),
-\)
-under strict real-domain positivity constraints with conservative symbolic validity enforcement, grammar-pure mutation without repair, and rejection-aware accounting in which every candidate attempt—accepted or rejected—consumes evaluation budget. Across a structural benchmark study and an exploratory evolutionary experiment on 18 domain-safe targets, three coupled effects emerge. Recursive EML macro-expansion systematically inflates symbolic tree depth and node count compared to native exp/log representations. This structural bloat subsequently concentrates valid candidates into sparser search regions, driving up rejection density when strict validity is enforced. Consequently, elevated rejection rates cripple effective evolutionary throughput; identical nominal budgets simply support fewer productive generations. Rejection decomposition further shows that throughput loss stems overwhelmingly from structural depth overflow arising from recursive macro-expansion, rather than from numerical instability alone. We present these findings as a controlled empirical characterization of validity-aware symbolic search under operator-space restriction, not as a blanket claim of algorithmic superiority.\end{abstract}
+In evolutionary symbolic regression, restricting the operator space geometrically reshapes the search manifold, but the operational costs of strict validity enforcement are often obscured by nominal budget accounting. This paper presents a controlled empirical characterization of how constrained operator grammars reshape symbolic search behavior under strict domain constraints. We analyze a grammar built from a single nonlinear primitive, $\mathrm{eml}(x,y)=\exp(x)-\ln(y)$, under strict real-domain positivity constraints using grammar-pure mutation and rejection-aware budget accounting. Across 18 domain-safe targets, recursive EML macro-expansion systematically inflated symbolic tree depth ($4.4\pm0.9$ vs $3.2\pm0.9$ baseline). This structural bloat concentrated valid candidates into sparser search regions, driving aggregate rejection rates up to $85.9\%$. Consequently, identical nominal evaluation budgets yielded $\approx 67\%$ fewer productive generations. Depth-triggered rejections accounted for $75.2\%$ of all failures under EML, confirming that structural overflow, rather than numerical instability, is the primary bottleneck. These findings mechanistically link rewrite rules to effective evolutionary throughput, demonstrating that rejection-aware accounting is essential for evaluating constrained symbolic systems.
+\end{abstract}
 
 \keywords{symbolic regression \and operator-space constraints \and structural inflation \and rejection rate \and EML representation}
 
@@ -149,7 +146,16 @@ and effective throughput is central to the results that follow.
 
 \section{Experimental Design}\label{sec:experimental_design}
 
-The structural and search-behavior differences identified in Section~\ref{sec:background} motivate a controlled experiment. The search procedure is intentionally simple in order to isolate representational effects from optimizer-specific heuristics. This is a controlled grammar study, not a competitive optimizer evaluation; advanced archiving, age-fitness Pareto optimization, or complex repair mechanisms are explicitly excluded to prevent them from masking the raw structural impact of the representation. The intentional simplicity ensures that observed differences are attributable to grammar-induced search-space geometry rather than optimizer-specific enhancements. The search runs with the following fixed parameters:
+This work is structured as a controlled empirical study to characterize how constrained grammars affect search dynamics. We define four independent variables: the grammar type (EML versus native exp/log), the maximum tree depth limit, the validity enforcement policy (strict symbolic positivity), and the fixed evaluation budget. The dependent variables measured are symbolic node count, tree depth, rejection rate, rejection decomposition (domain, depth, and numeric), completed generations, and mean squared error (MSE).
+
+The structural differences identified in Section~\ref{sec:background} motivate three explicit hypotheses:
+\begin{itemize}[itemsep=0pt,topsep=0pt]
+  \item \textbf{H1:} Recursive EML macro-expansion increases symbolic tree depth and node count relative to native exp/log representations.
+  \item \textbf{H2:} Structural inflation under constrained grammars increases rejection density under strict validity enforcement.
+  \item \textbf{H3:} Elevated rejection density reduces effective evolutionary throughput under fixed evaluation budgets.
+\end{itemize}
+
+The search procedure is intentionally simple in order to isolate these representational effects from optimizer-specific heuristics. This is a controlled grammar study, not a competitive optimizer evaluation; advanced archiving, age-fitness Pareto optimization, or complex repair mechanisms are explicitly excluded to prevent them from masking the raw structural impact of the representation. The intentional simplicity ensures that observed differences are attributable to grammar-induced search-space geometry rather than optimizer-specific enhancements. The search runs with the following fixed parameters:
 \begin{itemize}[itemsep=0pt,topsep=0pt]
   \item Population size: $100$.
   \item Elite size: $15$.
@@ -193,7 +199,7 @@ deterministic given the seed settings in \verb!src/eml/config.py!.
 \section{Structural Characterization Results}\label{sec:structural_results}
 
 The structural analysis quantifies the representational cost of operator
-restriction. Table~\ref{tab:inflation_summary} aggregates the key metrics
+restriction and tests our hypotheses. Table~\ref{tab:inflation_summary} aggregates the key metrics
 across all 18 targets.
 
 \begin{table}[t]
@@ -215,9 +221,9 @@ Ratio (EML/bl) & 1.4$\times$ & 1.4$\times$ & 0.1$\times$ & 11.4$\times$ & 0.3$\t
 \end{tabular}
 \end{table}
 
-The EML grammar produces trees with $1.4\times$ more nodes and $1.4\times$
-greater depth on average, while experiencing $1.9\times$ higher aggregate
-rejection rates ($85.9\%$ vs.~$44.6\%$). Consequently, EML completes only $0.3\times$ as many generations as the baseline under the same evaluation budget.
+Consistent with \textbf{H1}, the EML grammar systematically increased expression size, producing trees with $14.8\pm5.2$ nodes and $4.4\pm0.9$ depth on average, compared to $10.6\pm4.0$ nodes and $3.2\pm0.9$ depth for the baseline ($1.4\times$ inflation). This structural bloat is a direct operational consequence of recursive macro-expansion.
+
+Supporting \textbf{H2}, this structural inflation drove up rejection density. EML experienced $1.9\times$ higher aggregate rejection rates ($85.9\%$) than the baseline ($44.6\%$). Disaggregating these rejections reveals the underlying mechanism: depth-triggered rejections surged to $75.2\pm0.7\%$ under EML (compared to $6.6\pm6.0\%$ in the baseline). This demonstrates that the deep encodings required for domain safety exhaust the depth budget before semantic verification can even occur, concentrating valid candidates into sparser search regions.
 
 The distribution of rejection rates across targets further illustrates the
 search-space sparsity difference between grammars.
@@ -254,11 +260,9 @@ The disaggregated rejection metrics reveal that depth rejection dominates under 
 
 \section{Symbolic Regression Results}\label{sec:regression_results}
 
-The structural patterns documented above have direct consequences for
-evolutionary search. The relationship between rejection density and effective
-throughput is shown in Figure~\ref{fig:rej_vs_gen}, which plots rejection
-rate against productive generations completed for each target under both
-grammars.
+The structural bloat and rejection penalties documented above directly limit the evolutionary process. In support of \textbf{H3}, the elevated rejection density under EML severely reduced effective evolutionary throughput. Despite identical nominal budgets of $4{,}000$ evaluations, EML completed only $5.1\pm0.4$ productive generations on average, compared to $15.5\pm1.0$ for the baseline. This $\approx 67\%$ reduction in throughput establishes that constrained validity enforcement carries a substantial operational cost.
+
+The mechanism linking rejection to throughput is visualized in Figure~\ref{fig:rej_vs_gen}, which plots rejection rate against completed generations for each target under both grammars.
 
 \begin{figure}[t]
 \centering
@@ -267,7 +271,7 @@ grammars.
 \label{fig:rej_vs_gen}
 \end{figure}
 
-This separation is clear: EML targets cluster in the high-rejection, low-generation region, while baseline targets occupy the opposite quadrant, confirming that higher rejection density reduces productive generations under fixed budgets.
+This separation is clear: EML targets cluster in the high-rejection, low-generation region, while baseline targets occupy the opposite quadrant. This confirms that higher rejection density directly cannibalizes the evaluation budget, reducing the number of productive evolutionary updates.
 
 The exploratory regression experiment produced additional characterization
 observations:
@@ -314,41 +318,17 @@ not a quantity to be normalized away.
 \subsubsection{Rejection Type Analysis Clarifies Operational Mechanisms}
 The disaggregated rejection metrics enable a more nuanced interpretation of search behavior. Depth rejection dominates under EML ($75.2\pm0.7\%$ vs.~$6.6\pm6.0\%$ baseline), indicating that structural inflation operationalizes the primary throughput constraint---the grammar's encoding of domain-safe representations consumes depth budget at scale. Domain rejection is lower under EML ($0.6\%$ vs.~$6.5\%$ baseline) because depth filtering occurs first, removing structurally excessive candidates before domain verification. Numeric rejection is also reduced under EML ($10.0\%$ vs.~$31.5\%$ baseline) as a secondary effect of depth filtering. This cascade---structural inflation (required for domain-safe encodings) triggers depth rejection, which subsequently constrains domain verification---reveals that EML's fundamental limitation is representational compactness under domain constraints, not semantic validity in isolation. The constrained grammar produces valid expressions when depth permits; the challenge is that permitted depths are systematically shallower due to the macro-expansion required for domain safety.
 
-The study has clear limitations, reported here to bound the conclusions
-that can be drawn. The benchmark suite is small and restricted to
-functions expressible within the positive-domain exp--log fragment.
-The evolutionary search strategy is deliberately simple; it is not
-designed for state-of-the-art symbolic regression and should not be
-evaluated as such. The EML fragment excludes trigonometric, hyperbolic,
-and complex-valued constructions, so the results do not address the full
-theoretical expressivity of the EML operator. Conservative positivity
-checking may reject expressions that are provably safe under more
-sophisticated domain analysis. No claim is made that EML is preferable to
-standard grammars for any specific application.
+\subsubsection{Limitations}
+This paper characterizes constrained-search behavior under controlled conditions rather than establishing universal symbolic regression performance properties. The benchmark suite is exploratory and restricted to 18 targets expressible within the positive-domain exp--log fragment. The evolutionary algorithm is deliberately simple to isolate representation effects, lacking state-of-the-art archiving or age-fitness Pareto optimization. Furthermore, the EML fragment studied here excludes trigonometric, hyperbolic, and complex-valued constructions, so the findings apply strictly to the real-domain positivity-constrained subset. Finally, conservative symbolic positivity checking may reject expressions that are numerically safe under more sophisticated interval analyses.
+
+\subsubsection{Implications}
+These findings suggest that validity-aware budget accounting provides a useful framework for analyzing effective search capacity in constrained symbolic systems. When invalid candidate generation consumes nontrivial computational resources, evaluating grammars solely on nominal budgets obscures the operational reality of the search. Characterizing the mechanistic link between structural inflation and rejection density offers a principled lens for designing operator restrictions and adaptive depth constraints in domain-aware symbolic regression.
 
 \section{Conclusion}\label{sec:conclusion}
 
-This study has characterized how a constrained operator grammar---built from
-the single nonlinear primitive $\eml(x,y) = \expf(x) - \lnf(y)$---reshapes
-symbolic search behavior under real-domain constraints. Three findings emerge
-consistently from the experiments.
+This study provides a controlled empirical characterization of how constrained operator grammars reshape symbolic search geometry. By restricting a symbolic regression system to the single nonlinear primitive $\eml(x,y) = \expf(x) - \lnf(y)$ under strict real-domain positivity constraints, we identified three coupled mechanical effects. First, recursive macro-expansion induces systematic structural inflation, increasing tree depth ($4.4\pm0.9$ vs $3.2\pm0.9$ baseline) across all targets. Second, this inflation dramatically increases rejection density ($85.9\%$ aggregate rejection vs $44.6\%$ baseline), primarily driven by depth-limit overflow ($75.2\%$) rather than numerical instability. Third, this sparse validity reduces effective evolutionary throughput, yielding $\approx 67\%$ fewer productive generations under identical nominal evaluation budgets.
 
-First, operator restriction induces systematic structural inflation: each
-transcendental subexpression expands into a deeper, wider EML encoding,
-increasing both node count and tree depth across all targets. Second, domain
-constraints---particularly the strict positivity requirements on logarithm
-arguments---produce elevated rejection rates that reflect a sparser valid
-region within the constrained grammar's candidate space. Third, the
-combination of higher rejection density and deeper candidate structures
-reduces effective search throughput: the same nominal evaluation budget
-supports fewer productive generations under EML than under the standard
-grammar.
-
-These three effects---structural inflation, sparse validity, and throughput
-reduction---are not independent. They emerge jointly from the decision to
-restrict the nonlinear operator set. Under fixed evaluation budgets, increased
-rejection density reduces the number of productive evolutionary updates
-available to the constrained grammar. This study demonstrates that rejection-aware budget accounting reveals the cost of invalid candidate sampling under constrained grammars: every rejected evaluation consumes budget that would otherwise support productive search. Rejection-aware budget accounting is therefore a fundamental consideration in constrained symbolic regression design, not a secondary implementation detail, and practitioners should consider strategies such as adaptive depth caps, rejection-stratified budgets, or grammar-aware population sizing when operating under strict validity constraints. Characterizing these dynamics under controlled conditions is a necessary step toward principled grammar design in domain-restricted symbolic search.
+These findings carry an important implication for constrained symbolic regression: nominal evaluation budgets obscure the true operational cost of invalid candidate sampling. Rejection-aware budget accounting is therefore essential for evaluating and designing domain-restricted grammars. However, we acknowledge clear limits to this study. The observations are derived from an exploratory 18-target suite on the positive real domain, utilizing a deliberately simple evolutionary algorithm without advanced archiving or repair heuristics. Consequently, these results characterize the baseline geometrical distortion induced by the EML representation rather than its ultimate competitive potential. Future work must investigate whether adaptive depth limits or grammar-aware population sizing can mitigate these inherent structural costs.
 
 \begin{sloppypar}
 \begin{thebibliography}{9}

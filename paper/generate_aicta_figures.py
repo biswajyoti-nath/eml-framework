@@ -266,7 +266,7 @@ def generate_rejection_composition(data: list[dict]) -> None:
     ax.text(x[1], eml_domain_share + eml_depth_share / 2, f"{eml_depth_share:.1f}%", ha="center", va="center", fontsize=8, color="white", fontweight="bold")
     ax.text(x[1], eml_domain_share + eml_depth_share + eml_numeric_share / 2, f"{eml_numeric_share:.1f}%", ha="center", va="center", fontsize=8, color="white", fontweight="bold")
 
-    ax.legend(loc="upper right", framealpha=0.9, edgecolor="#cccccc", title="Rejection type")
+    ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left", framealpha=0.9, edgecolor="#cccccc", title="Rejection type")
     plt.tight_layout()
     out = FIGURE_DIR / "rejection_composition.pdf"
     fig.savefig(out, bbox_inches="tight")
