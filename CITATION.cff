@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
 type: software
-title: "EML Framework: A Representation Study of the Exp-Minus-Log Operator"
+title: "EML Framework: Constrained Grammars in Symbolic Regression"
 authors:
   - family-names: Nath
     given-names: Biswajyoti
@@ -9,23 +9,19 @@ authors:
 repository-code: "https://github.com/biswajyoti-nath/eml-framework"
 doi: 10.5281/zenodo.19991157
 url: "https://doi.org/10.5281/zenodo.19991157"
-version: "0.1.0"
-date-released: "2026-05-03"
+version: "2.0.0"
+date-released: "2026-05-11"
 license: MIT
 abstract: >
-  A research implementation studying the structural and computational
-  behaviour of the EML operator — eml(x, y) = exp(x) − ln(y) — under
-  practical, real-domain constraints. This repository implements a
-  restricted, positive-domain exp–log fragment of the operator defined
-  by Odrzywołek (2026), measures its effect on symbolic expression-tree
-  structure across a 23-expression benchmark suite, and explores
-  search-space behaviour in an evolutionary symbolic regression setting.
+  A controlled empirical study of validity-aware symbolic search dynamics under constrained operator grammars. This repository implements an evolutionary symbolic regression framework with strict domain validation, rejection-aware budget accounting, and grammar-pure mutation operators. It characterizes how operator restrictions induce structural inflation, elevate rejection rates, and reduce effective search throughput, providing reproducible experiments over a benchmark suite of domain-safe targets.
 keywords:
-  - symbolic computation
-  - exp-log algebra
-  - expression trees
   - symbolic regression
-  - domain validation
+  - constrained grammars
+  - evolutionary computation
+  - validity-aware search
+  - search-space sparsity
+  - grammar-guided search
+  - domain-safe symbolic computation
 references:
   - type: article
     title: "All elementary functions from a single binary operator"
@@ -65,16 +61,26 @@ references:
     journal: "Science Advances"
     doi: 10.1126/sciadv.aay2631
   - type: article
-    title: "Symbolic Regression with a Learned Concept Library"
+    title: "Strongly typed genetic programming"
     authors:
-      - family-names: Laabid
-        given-names: Najwa
-      - family-names: Grayeli
-        given-names: "Hadrien A."
-      - family-names: Lang
-        given-names: Leon
-      - family-names: Mordig
-        given-names: Maximilian
-    year: 2024
-    url: "https://arxiv.org/abs/2409.09359"
-    doi: 10.48550/arXiv.2409.09359
+      - family-names: Montana
+        given-names: "David J."
+    year: 1995
+    journal: "Evolutionary Computation"
+    doi: 10.1162/evco.1995.3.2.199
+  - type: article
+    title: "Grammar-based genetic programming: a survey"
+    authors:
+      - family-names: McKay
+        given-names: "R. I."
+      - family-names: Hoai
+        given-names: Nguyen
+      - family-names: Whigham
+        given-names: "P. A."
+      - family-names: Shan
+        given-names: Yin
+      - family-names: O'Neill
+        given-names: Michael
+    year: 2010
+    journal: "Genetic Programming and Evolvable Machines"
+    doi: 10.1007/s10710-010-9116-4
