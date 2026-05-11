@@ -1,4 +1,4 @@
-# EML Framework: Operator-Space Constraints in Symbolic Regression
+# Constrained EML Grammars in Symbolic Regression: Structural Inflation and Throughput Loss
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19991157.svg)](https://doi.org/10.5281/zenodo.19991157)
 
@@ -94,8 +94,8 @@ If you use this code in your work, please cite:
 ```bibtex
 @software{eml_framework_2026,
   author    = {Nath, Biswajyoti},
-  title     = {{EML Framework: Operator-Space Constraints in
-                Symbolic Regression}},
+  title     = {{Constrained EML Grammars in Symbolic Regression:
+                Structural Inflation and Throughput Loss}},
   year      = {2026},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.19991157},

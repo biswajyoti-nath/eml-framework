@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
 type: software
-title: "EML Framework: Constrained Grammars in Symbolic Regression"
+title: "Constrained EML Grammars in Symbolic Regression: Structural Inflation and Throughput Loss"
 authors:
   - family-names: Nath
     given-names: Biswajyoti
